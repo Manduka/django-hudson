@@ -58,7 +58,7 @@ class Command(BaseCommand):
         failures = 0
         if 'tests' in tasks:
             test_runner = XmlDjangoTestSuiteRunner(output_dir=output_dir, interactive=interactive, verbosity=verbosity)
-            failures = test_runner.run_tests(test_labels)
+            failures = test_runner.run_tests([label.split('.')[-1] for label in test_labels])
 
         #save coverage report
         if 'coverage' in tasks:
