@@ -21,6 +21,8 @@ class Command(BaseCommand):
         make_option('--excludes', dest="excludes", default='',
             help="""Comma seperated list of words, modules containing those words
             will be excluded from coverage reports."""),
+        make_option('--tasks', dest="tasks", default='',
+            help="""Comma seperated list of tasks to complete."""),
     )
 
     def handle(self, *test_labels, **options):
@@ -34,8 +36,11 @@ class Command(BaseCommand):
         excludes = options.get('excludes', '').split(',')
         excludes = [ exclude.strip() for exclude in excludes ]
 
-        tasks = getattr(settings, 'HUDSON_TASKS',
-                        ['pylint', 'coverage', 'tests'])
+        tasks = options.get('tasks', '').split(',')
+        tasks = [ task.strip() for task in tasks ]
+        if not tasks:
+            tasks = getattr(settings, 'HUDSON_TASKS',
+                            ['pylint', 'coverage', 'tests'])
 
         output_dir=options.get('output_dir')
         if not path.exists(output_dir):
