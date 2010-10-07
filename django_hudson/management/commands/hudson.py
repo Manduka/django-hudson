@@ -4,6 +4,7 @@ from os import path
 import coverage
 from optparse import make_option
 from django.conf import settings
+from django.db.models.loading import get_app
 from django.core.management.base import BaseCommand
 from django_hudson.management.commands.lint import Command as pylint
 from django_hudson.xmlrunner import XmlDjangoTestSuiteRunner
@@ -58,7 +59,9 @@ class Command(BaseCommand):
         failures = 0
         if 'tests' in tasks:
             test_runner = XmlDjangoTestSuiteRunner(output_dir=output_dir, interactive=interactive, verbosity=verbosity)
-            failures = test_runner.run_tests([label.split('.')[-1] for label in test_labels])
+            test_apps = [label.split('.')[-1] for label in test_labels]
+            test_apps = filter(lambda x: bool(get_app(x, True)), test_apps)
+            failures = test_runner.run_tests(test_apps)
 
         #save coverage report
         if 'coverage' in tasks:
