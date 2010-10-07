@@ -36,9 +36,10 @@ class Command(BaseCommand):
         excludes = options.get('excludes', '').split(',')
         excludes = [ exclude.strip() for exclude in excludes ]
 
-        tasks = options.get('tasks', '').split(',')
-        tasks = [ task.strip() for task in tasks ]
-        if not tasks:
+        if options.get('tasks', '').strip():
+            tasks = options.get('tasks', '').split(',')
+            tasks = [ task.strip() for task in tasks ]
+        else:
             tasks = getattr(settings, 'HUDSON_TASKS',
                             ['pylint', 'coverage', 'tests'])
 
