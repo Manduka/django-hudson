@@ -1,6 +1,6 @@
 django>=1.2
 pylint
-coverage>=3.4b1
+coverage>=3.4
 
 # tests only
 ipdb
