@@ -228,8 +228,7 @@ class _XMLTestResult(_TextTestResult):
             failure.setAttribute('message', str(test_result.err[1]))
             
             error_info = test_result.get_error_info()
-            failureText = xml_document.createCDATASection(error_info)
-            failure.appendChild(failureText)
+            _XMLTestResult._add_cdata(xml_document, error_info, failure)
     
     _report_testcase = staticmethod(_report_testcase)
     
@@ -239,17 +238,32 @@ class _XMLTestResult(_TextTestResult):
         xml_testsuite.appendChild(systemout)
         
         stdout = test_runner.stdout.getvalue()
-        systemout_text = xml_document.createCDATASection(stdout)
-        systemout.appendChild(systemout_text)
+        _XMLTestResult._add_cdata(xml_document, stdout, systemout)
         
         systemerr = xml_document.createElement('system-err')
         xml_testsuite.appendChild(systemerr)
         
         stderr = test_runner.stderr.getvalue()
-        systemerr_text = xml_document.createCDATASection(stderr)
-        systemerr.appendChild(systemerr_text)
+        _XMLTestResult._add_cdata(xml_document, stderr, systemerr)
     
     _report_output = staticmethod(_report_output)
+    
+    def _add_cdata(xml_document, content, append_to=None):
+        results = list()
+        content = content.split(']]>')
+        for index, entry in enumerate(content):
+            if not entry:
+                continue
+            if index < len(content) - 1:
+                entry += ']]'
+            results.append(xml_document.createCDATASection(entry))
+            if index < len(content) - 1:
+                results.append(xml_document.createCDATASection('>'))
+        if append_to:
+            for result in results:
+                append_to.appendChild(result)
+    
+    _add_cdata = staticmethod(_add_cdata)
     
     def generate_reports(self, test_runner):
         "Generates the XML reports to a given XMLTestRunner object."
