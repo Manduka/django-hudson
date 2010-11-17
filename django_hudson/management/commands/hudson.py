@@ -67,8 +67,7 @@ class Command(BaseCommand):
         failures = 0
         if 'tests' in tasks:
             test_runner = XmlDjangoTestSuiteRunner(output_dir=output_dir, interactive=interactive, verbosity=verbosity)
-            test_apps = [label.split('.')[-1] for label in test_labels]
-            test_apps = filter(lambda x: bool(get_app(x, True)), test_apps)
+            test_apps = filter(lambda x: bool(get_app(x, True)), test_labels)
             failures = test_runner.run_tests(test_apps)
 
         #save coverage report
