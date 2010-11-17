@@ -55,8 +55,10 @@ class Command(BaseCommand):
 
         #TODO: Make lint work and with external rc file
         if 'pylint' in tasks:
-            pylint().handle(*test_labels,
-                             output_file=path.join(output_dir,'pylint.report'))
+            pylint().handle(
+                output_file=path.join(output_dir,'pylint.report'),
+                *test_labels
+            )
 
         if 'coverage' in tasks:
             coverage.exclude('#pragma[: ]+[nN][oO] [cC][oO][vV][eE][rR]')
@@ -129,4 +131,4 @@ class Command(BaseCommand):
         if hasattr(settings, 'PROJECT_APPS'):
             apps = settings.PROJECT_APPS
         excludes = getattr(settings, 'TEST_EXCLUDES', [])
-        return [app for app in  apps if app not in excludes ]
+        return [app.split('.')[-1] for app in  apps if app not in excludes ]
