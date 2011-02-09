@@ -129,5 +129,6 @@ class Command(BaseCommand):
         apps = settings.INSTALLED_APPS
         if hasattr(settings, 'PROJECT_APPS'):
             apps = settings.PROJECT_APPS
+        apps = [app.split('.')[-1] for app in app]
         excludes = getattr(settings, 'TEST_EXCLUDES', [])
-        return [app.split('.')[-1] for app in  apps if app not in excludes ]
+        return [app for app in apps if app not in excludes ]
